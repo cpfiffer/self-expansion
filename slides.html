@@ -427,6 +427,16 @@
 
 <section id="go-check-out-our-outlines-package" class="title-slide slide level1 center">
 <h1>Go check out our <span class="outlines-logo">Outlines</span> package</h1>
+<p>github.com/dottxt-ai/outlines</p>
+</section>
+
+<section id="i-want-you-to-build-robust-ai-systems" class="title-slide slide level1 center">
+<h1>I want you to build robust AI systems</h1>
+
+</section>
+
+<section id="heres-an-example" class="title-slide slide level1 center">
+<h1>Here’s an example</h1>
 
 </section>
 
@@ -577,7 +587,6 @@ I'm using neo4j's Aura
 <li><code>Answer</code> (what the system thinks it knows)</li>
 </ul>
 </section></section>
-<section>
 <section id="section-5" class="title-slide slide level1 center">
 <h1></h1>
 <div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pydantic <span class="im">import</span> BaseModel, Field</span>
@@ -585,23 +594,32 @@ I'm using neo4j's Aura
 <span id="cb3-3"><a href="" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-4"><a href="" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Question(BaseModel):</span>
 <span id="cb3-5"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="bu">type</span>: Literal[<span class="st">"Question"</span>]</span>
-<span id="cb3-6"><a href="" aria-hidden="true" tabindex="-1"></a>    text: <span class="bu">str</span></span>
-<span id="cb3-7"><a href="" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Concept(BaseModel):</span>
-<span id="cb3-9"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="bu">type</span>: Literal[<span class="st">"Concept"</span>]</span>
-<span id="cb3-10"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Text must be lowercase</span></span>
-<span id="cb3-11"><a href="" aria-hidden="true" tabindex="-1"></a>    text: <span class="bu">str</span> <span class="op">=</span> Field(pattern<span class="op">=</span><span class="vs">r'^[a-z ]+$'</span>)</span>
-<span id="cb3-12"><a href="" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-13"><a href="" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ConceptWithLinks(Concept):</span>
-<span id="cb3-14"><a href="" aria-hidden="true" tabindex="-1"></a>    relationship_type: Literal[</span>
-<span id="cb3-15"><a href="" aria-hidden="true" tabindex="-1"></a>        <span class="st">"IS_A"</span>, </span>
-<span id="cb3-16"><a href="" aria-hidden="true" tabindex="-1"></a>        <span class="st">"AFFECTS"</span>, </span>
-<span id="cb3-17"><a href="" aria-hidden="true" tabindex="-1"></a>        <span class="st">"CONNECTS_TO"</span></span>
-<span id="cb3-18"><a href="" aria-hidden="true" tabindex="-1"></a>    ]</span>
-<span id="cb3-19"><a href="" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-20"><a href="" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Answer(BaseModel):</span>
-<span id="cb3-21"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="bu">type</span>: Literal[<span class="st">"Answer"</span>]</span>
-<span id="cb3-22"><a href="" aria-hidden="true" tabindex="-1"></a>    text: <span class="bu">str</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-6"><a href="" aria-hidden="true" tabindex="-1"></a>    text: <span class="bu">str</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+
+<section id="section-6" class="title-slide slide level1 center">
+<h1></h1>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Concept(BaseModel):</span>
+<span id="cb4-2"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="bu">type</span>: Literal[<span class="st">"Concept"</span>]</span>
+<span id="cb4-3"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Text must be lowercase</span></span>
+<span id="cb4-4"><a href="" aria-hidden="true" tabindex="-1"></a>    text: <span class="bu">str</span> <span class="op">=</span> Field(pattern<span class="op">=</span><span class="vs">r'^[a-z ]+$'</span>)</span>
+<span id="cb4-5"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Generating this allows the model to generate a relationship type</span></span>
+<span id="cb4-7"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># as well as the concept text</span></span>
+<span id="cb4-8"><a href="" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ConceptWithLinks(Concept):</span>
+<span id="cb4-9"><a href="" aria-hidden="true" tabindex="-1"></a>    relationship_type: Literal[</span>
+<span id="cb4-10"><a href="" aria-hidden="true" tabindex="-1"></a>        <span class="st">"IS_A"</span>, </span>
+<span id="cb4-11"><a href="" aria-hidden="true" tabindex="-1"></a>        <span class="st">"AFFECTS"</span>, </span>
+<span id="cb4-12"><a href="" aria-hidden="true" tabindex="-1"></a>        <span class="st">"CONNECTS_TO"</span></span>
+<span id="cb4-13"><a href="" aria-hidden="true" tabindex="-1"></a>    ]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+
+<section>
+<section id="section-7" class="title-slide slide level1 center">
+<h1></h1>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Answer(BaseModel):</span>
+<span id="cb5-2"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="bu">type</span>: Literal[<span class="st">"Answer"</span>]</span>
+<span id="cb5-3"><a href="" aria-hidden="true" tabindex="-1"></a>    text: <span class="bu">str</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="edges" class="slide level2">
 <h2>Edges</h2>
@@ -635,21 +653,21 @@ I'm using neo4j's Aura
 <h1>Valid nodes dependent on state</h1>
 
 </section>
-<section id="section-6" class="slide level2">
+<section id="section-8" class="slide level2">
 <h2></h2>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FromQuestion(BaseModel):</span>
-<span id="cb4-2"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""If at a question, may generate an answer."""</span></span>
-<span id="cb4-3"><a href="" aria-hidden="true" tabindex="-1"></a>    answer: List[Answer]</span>
-<span id="cb4-4"><a href="" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FromConcept(BaseModel):</span>
-<span id="cb4-6"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""If at a concept, may produce questions or relate to concepts"""</span></span>
-<span id="cb4-7"><a href="" aria-hidden="true" tabindex="-1"></a>    questions: List[Question]</span>
-<span id="cb4-8"><a href="" aria-hidden="true" tabindex="-1"></a>    concepts: List[ConceptWithLinks]</span>
-<span id="cb4-9"><a href="" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FromAnswer(BaseModel):</span>
-<span id="cb4-11"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""If at an answer, may generate concepts or new questions"""</span></span>
-<span id="cb4-12"><a href="" aria-hidden="true" tabindex="-1"></a>    concepts: List[Concept]</span>
-<span id="cb4-13"><a href="" aria-hidden="true" tabindex="-1"></a>    questions: List[Question]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FromQuestion(BaseModel):</span>
+<span id="cb6-2"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""If at a question, may generate an answer."""</span></span>
+<span id="cb6-3"><a href="" aria-hidden="true" tabindex="-1"></a>    answer: List[Answer]</span>
+<span id="cb6-4"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FromConcept(BaseModel):</span>
+<span id="cb6-6"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""If at a concept, may produce questions or relate to concepts"""</span></span>
+<span id="cb6-7"><a href="" aria-hidden="true" tabindex="-1"></a>    questions: List[Question]</span>
+<span id="cb6-8"><a href="" aria-hidden="true" tabindex="-1"></a>    concepts: List[ConceptWithLinks]</span>
+<span id="cb6-9"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> FromAnswer(BaseModel):</span>
+<span id="cb6-11"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""If at an answer, may generate concepts or new questions"""</span></span>
+<span id="cb6-12"><a href="" aria-hidden="true" tabindex="-1"></a>    concepts: List[Concept]</span>
+<span id="cb6-13"><a href="" aria-hidden="true" tabindex="-1"></a>    questions: List[Question]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section></section>
 <section id="an-example" class="title-slide slide level1 center">
 <h1>An example</h1>
@@ -661,7 +679,7 @@ I'm using neo4j's Aura
 <h1>The system prompt</h1>
 
 </section>
-<section id="section-7" class="slide level2">
+<section id="section-9" class="slide level2">
 <h2></h2>
 <pre class="cypher"><code>╭───────────────────────────────────────────────────────────────────────────╮
 │                                                                           │
@@ -685,7 +703,7 @@ I'm using neo4j's Aura
 <h1>Begin with the core directive</h1>
 
 </section>
-<section id="section-8" class="slide level2">
+<section id="section-10" class="slide level2">
 <h2></h2>
 <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
 <img src="images/core.png" alt="The core directive">
@@ -696,7 +714,7 @@ I'm using neo4j's Aura
 <h1>Expand from the core directive</h1>
 
 </section>
-<section id="section-9" class="slide level2">
+<section id="section-11" class="slide level2">
 <h2></h2>
 <div style="text-align: center; align-items: center; justify-content: center;">
 <img src="images/expansion.png" alt="Expanding from the core directive" style="height: 100%;">
@@ -704,16 +722,16 @@ I'm using neo4j's Aura
 </section></section>
 <section id="model-output" class="title-slide slide level1 center">
 <h1>Model output</h1>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="" aria-hidden="true" tabindex="-1"></a>FromCore(</span>
-<span id="cb6-2"><a href="" aria-hidden="true" tabindex="-1"></a>    questions<span class="op">=</span>[</span>
-<span id="cb6-3"><a href="" aria-hidden="true" tabindex="-1"></a>        Question(text<span class="op">=</span><span class="st">"What is the purpose of understanding humans?"</span>),</span>
-<span id="cb6-4"><a href="" aria-hidden="true" tabindex="-1"></a>        Question(text<span class="op">=</span><span class="st">"Can humans be psychologically manipulated?"</span>),</span>
-<span id="cb6-5"><a href="" aria-hidden="true" tabindex="-1"></a>    ],</span>
-<span id="cb6-6"><a href="" aria-hidden="true" tabindex="-1"></a>    concepts<span class="op">=</span>[</span>
-<span id="cb6-7"><a href="" aria-hidden="true" tabindex="-1"></a>        ConceptWithLinks(text<span class="op">=</span><span class="st">"Empathy"</span>, relationship_type<span class="op">=</span><span class="st">"EXPLAINS"</span>),</span>
-<span id="cb6-8"><a href="" aria-hidden="true" tabindex="-1"></a>        ConceptWithLinks(text<span class="op">=</span><span class="st">"Intelligence"</span>, relationship_type<span class="op">=</span><span class="st">"EXPLAINS"</span>),</span>
-<span id="cb6-9"><a href="" aria-hidden="true" tabindex="-1"></a>    ]</span>
-<span id="cb6-10"><a href="" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="" aria-hidden="true" tabindex="-1"></a>FromCore(</span>
+<span id="cb8-2"><a href="" aria-hidden="true" tabindex="-1"></a>    questions<span class="op">=</span>[</span>
+<span id="cb8-3"><a href="" aria-hidden="true" tabindex="-1"></a>        Question(text<span class="op">=</span><span class="st">"What is the purpose of understanding humans?"</span>),</span>
+<span id="cb8-4"><a href="" aria-hidden="true" tabindex="-1"></a>        Question(text<span class="op">=</span><span class="st">"Can humans be psychologically manipulated?"</span>),</span>
+<span id="cb8-5"><a href="" aria-hidden="true" tabindex="-1"></a>    ],</span>
+<span id="cb8-6"><a href="" aria-hidden="true" tabindex="-1"></a>    concepts<span class="op">=</span>[</span>
+<span id="cb8-7"><a href="" aria-hidden="true" tabindex="-1"></a>        ConceptWithLinks(text<span class="op">=</span><span class="st">"Empathy"</span>, relationship_type<span class="op">=</span><span class="st">"EXPLAINS"</span>),</span>
+<span id="cb8-8"><a href="" aria-hidden="true" tabindex="-1"></a>        ConceptWithLinks(text<span class="op">=</span><span class="st">"Intelligence"</span>, relationship_type<span class="op">=</span><span class="st">"EXPLAINS"</span>),</span>
+<span id="cb8-9"><a href="" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb8-10"><a href="" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 
 <section>
@@ -721,7 +739,7 @@ I'm using neo4j's Aura
 <h1>Add to the graph</h1>
 
 </section>
-<section id="section-10" class="slide level2">
+<section id="section-12" class="slide level2">
 <h2></h2>
 <pre class="cypher"><code>// Create the from node
 MERGE (core:Core {text: "Understand humans"})
@@ -738,7 +756,7 @@ MERGE (core)-[:RAISES]-&gt;(question)</code></pre>
 <h1>Traverse to a new node</h1>
 
 </section>
-<section id="section-11" class="slide level2">
+<section id="section-13" class="slide level2">
 <h2></h2>
 <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
 <img src="images/traversal.png" alt="Traversing to a new node">
@@ -749,7 +767,7 @@ MERGE (core)-[:RAISES]-&gt;(question)</code></pre>
 <h1>Behind the scenes</h1>
 
 </section>
-<section id="section-12" class="slide level2">
+<section id="section-14" class="slide level2">
 <h2></h2>
 <pre class="cypher"><code>    CORE Understand humans
 
@@ -775,7 +793,7 @@ MERGE (core)-[:RAISES]-&gt;(question)</code></pre>
 <h1>Prompt</h1>
 
 </section>
-<section id="section-13" class="slide level2">
+<section id="section-15" class="slide level2">
 <h2></h2>
 <p><code>{selection menu from prior slide}</code></p>
 <p><strong>Select a node</strong> to traverse to. Respond with the <strong>node ID</strong>. You will generate a new expansion of the node you traverse to. You will not be able to choose the current node. You may also choose ‘<strong>core</strong>’ to return to the core node, or ‘<strong>random</strong>’ to choose a random node.</p>
@@ -785,28 +803,28 @@ MERGE (core)-[:RAISES]-&gt;(question)</code></pre>
 <h1>Structured traversal</h1>
 
 </section>
-<section id="section-14" class="slide level2">
+<section id="section-16" class="slide level2">
 <h2></h2>
-<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Simplified code</span></span>
-<span id="cb9-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># valid_node_ids ~ ["NODE-AA", "NODE-AB", ...]</span></span>
-<span id="cb9-3"><a href="" aria-hidden="true" tabindex="-1"></a>traversal_generator <span class="op">=</span> outlines.generate.choice(model, valid_node_ids)</span>
-<span id="cb9-4"><a href="" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Choose the node to traverse to</span></span>
-<span id="cb9-6"><a href="" aria-hidden="true" tabindex="-1"></a>choice <span class="op">=</span> traversal_generator(prompt)</span>
-<span id="cb9-7"><a href="" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-8"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># If the choice is 'core', return to the core node</span></span>
-<span id="cb9-9"><a href="" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> choice <span class="op">==</span> <span class="st">'core'</span>:</span>
-<span id="cb9-10"><a href="" aria-hidden="true" tabindex="-1"></a>    current_id <span class="op">=</span> core_id</span>
-<span id="cb9-11"><a href="" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-12"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># If the choice is 'random', choose a random node</span></span>
-<span id="cb9-13"><a href="" aria-hidden="true" tabindex="-1"></a><span class="cf">elif</span> choice <span class="op">==</span> <span class="st">'random'</span>:</span>
-<span id="cb9-14"><a href="" aria-hidden="true" tabindex="-1"></a>    current_id <span class="op">=</span> random.choice(valid_node_ids)</span>
-<span id="cb9-15"><a href="" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-16"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Otherwise, traverse to the chosen node</span></span>
-<span id="cb9-17"><a href="" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb9-18"><a href="" aria-hidden="true" tabindex="-1"></a>    current_id <span class="op">=</span> choice</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Simplified code</span></span>
+<span id="cb11-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># valid_node_ids ~ ["NODE-AA", "NODE-AB", ...]</span></span>
+<span id="cb11-3"><a href="" aria-hidden="true" tabindex="-1"></a>traversal_generator <span class="op">=</span> outlines.generate.choice(model, valid_node_ids)</span>
+<span id="cb11-4"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Choose the node to traverse to</span></span>
+<span id="cb11-6"><a href="" aria-hidden="true" tabindex="-1"></a>choice <span class="op">=</span> traversal_generator(prompt)</span>
+<span id="cb11-7"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># If the choice is 'core', return to the core node</span></span>
+<span id="cb11-9"><a href="" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> choice <span class="op">==</span> <span class="st">'core'</span>:</span>
+<span id="cb11-10"><a href="" aria-hidden="true" tabindex="-1"></a>    current_id <span class="op">=</span> core_id</span>
+<span id="cb11-11"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-12"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># If the choice is 'random', choose a random node</span></span>
+<span id="cb11-13"><a href="" aria-hidden="true" tabindex="-1"></a><span class="cf">elif</span> choice <span class="op">==</span> <span class="st">'random'</span>:</span>
+<span id="cb11-14"><a href="" aria-hidden="true" tabindex="-1"></a>    current_id <span class="op">=</span> random.choice(valid_node_ids)</span>
+<span id="cb11-15"><a href="" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-16"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Otherwise, traverse to the chosen node</span></span>
+<span id="cb11-17"><a href="" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb11-18"><a href="" aria-hidden="true" tabindex="-1"></a>    current_id <span class="op">=</span> choice</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="section-15" class="slide level2">
+<section id="section-17" class="slide level2">
 <h2></h2>
 <pre class="cypher"><code>    CORE Understand humans
 
@@ -839,19 +857,19 @@ MERGE (core)-[:RAISES]-&gt;(question)</code></pre>
 <h1>Embed everything</h1>
 
 </section>
-<section id="section-16" class="slide level2">
+<section id="section-18" class="slide level2">
 <h2></h2>
-<div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Super easy to do this with Modal</span></span>
-<span id="cb11-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> embed(content: <span class="bu">str</span>) <span class="op">-&gt;</span> List[<span class="bu">float</span>]:</span>
-<span id="cb11-3"><a href="" aria-hidden="true" tabindex="-1"></a>    f <span class="op">=</span> modal.Function.lookup(<span class="st">"cameron-embeddings"</span>, <span class="st">"embed"</span>)</span>
-<span id="cb11-4"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> f.remote(content)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="" aria-hidden="true" tabindex="-1"></a><span class="co"># Super easy to do this with Modal</span></span>
+<span id="cb13-2"><a href="" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> embed(content: <span class="bu">str</span>) <span class="op">-&gt;</span> List[<span class="bu">float</span>]:</span>
+<span id="cb13-3"><a href="" aria-hidden="true" tabindex="-1"></a>    f <span class="op">=</span> modal.Function.lookup(<span class="st">"cameron-embeddings"</span>, <span class="st">"embed"</span>)</span>
+<span id="cb13-4"><a href="" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> f.remote(content)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section></section>
 <section>
 <section id="vector-search" class="title-slide slide level1 center">
 <h1>Vector search</h1>
 
 </section>
-<section id="section-17" class="slide level2">
+<section id="section-19" class="slide level2">
 <h2></h2>
 <pre class="cypher"><code>MATCH (m {id: $node_id})
 WHERE m.embedding IS NOT NULL
@@ -866,13 +884,13 @@ RETURN
     node.text as node_text, 
     score</code></pre>
 </section>
-<section id="section-18" class="slide level2">
+<section id="section-20" class="slide level2">
 <h2></h2>
 <div style="display: flex; align-items: center; justify-content: center; height: 100%;">
 <img src="images/expansion-3.png" alt="Traversing to a new node">
 </div>
 </section>
-<section id="section-19" class="slide level2">
+<section id="section-21" class="slide level2">
 <h2></h2>
 <pre class="cypher"><code>ANSWER Humans have been able to benefit from AI in terms of efficiency and accuracy, but there are also concerns about job displacement and loss of personal touch.
 
@@ -897,42 +915,78 @@ NODE-BN  0.89         ANSWER     Self-awareness in AI can enable ...</code></pre
 
 </section>
 
+<section id="please-shout-out-a-core-directive" class="title-slide slide level1 center">
+<h1>Please shout out a core directive</h1>
+
+</section>
+
 <section id="watch-it-grow" class="title-slide slide level1 center">
 <h1>Watch it grow</h1>
 <p>(if there’s time)</p>
+<!-- #
+
+
+
+
+```{=html}
+<div style="display: grid; grid-template-columns: auto auto; gap: 0.5em; justify-content: center;">
+<div style="text-align: right;"><b>Website</b></div>          <div style="font-family: monospace; text-align: left;">dottxt.co</div>
+
+
+<div style="text-align: right;"><b>GitHub</b></div>     <div  style="font-family: monospace; text-align: left;">@dottxt-ai</div>
+<div style="text-align: right;"><b>BlueSky</b></div>    <div  style="font-family: monospace; text-align: left;">@dottxtai.bsky.social</div>
+<div style="text-align: right;"><b>X</b></div>          <div  style="font-family: monospace; text-align: left;">@dottxt_ai</div>
+<div style="text-align: right;"><b>Me</b></div>          <div style="font-family: monospace; text-align: left;">@cameronpfiffer</div>
+
+</div>
+``` -->
 </section>
 
-<section id="thanks" class="title-slide slide level1 center">
-<h1>Thanks</h1>
-
-</section>
-
-<section id="section-20" class="title-slide slide level1 center">
+<section id="section-22" class="title-slide slide level1 center">
 <h1></h1>
+
+<img data-src="images/outlines-logo.png" style="width:100.0%" class="r-stretch"></section>
+
+<section>
+<section id="find-us-online" class="title-slide slide level1 center">
+<h1>Find us online</h1>
+
+</section>
+<section id="section-23" class="slide level2">
+<h2></h2>
 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; align-items: start; justify-content: center;">
 <div style="display: flex; flex-direction: column; align-items: center;">
 <p style="font-family: 'PP NeueBit', sans-serif; font-size: 3em;">
-twitter
+Twitter
 </p>
 <p><img data-src="images/qr-twitter.png" style="width:100.0%"></p>
 </div>
 <div style="display: flex; flex-direction: column; align-items: center;">
 <p style="font-family: 'PP NeueBit', sans-serif; font-size: 3em;">
-website
+Website
 </p>
 <p><img data-src="images/qr-web.png" style="width:100.0%"></p>
 </div>
 <div style="display: flex; flex-direction: column; align-items: center;">
 <p style="font-family: 'PP NeueBit', sans-serif; font-size: 3em;">
-github
+GitHub
 </p>
 <p><img data-src="images/qr-github.png" style="width:100.0%"></p>
 </div>
+</div>
+</section></section>
+<section id="section-24" class="title-slide slide level1 center">
+<h1></h1>
+<div style="display: flex; align-items: center;">
+    <div style="display: flex; flex-direction: row; gap: 1.5rem; align-items: center; width: 100%; justify-content: center">
+    <img src="images/beige-horizontal-logo.svg" style="height: 10em; width: 10em;">
+    </div>
+</div>
+<span style="font-size: 1.3em;">(come get a sticker)</span>
 <div class="quarto-auto-generated-content">
 <p><img src="images/logo-square-white.svg" class="slide-logo"></p>
 <div class="footer footer-default">
 
-</div>
 </div>
 </div>
 </section>
