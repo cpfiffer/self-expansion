@@ -31,6 +31,12 @@ format:
 
 # Go check out our <span class="outlines-logo">Outlines</span> package
 
+github.com/dottxt-ai/outlines
+
+# I want you to build robust AI systems
+
+# Here's an example
+
 # Let's build a self-expanding knowledge graph
 
 ## 
@@ -154,19 +160,29 @@ from typing import Literal
 class Question(BaseModel):
     type: Literal["Question"]
     text: str
+```
 
+#
+
+```python
 class Concept(BaseModel):
     type: Literal["Concept"]
     # Text must be lowercase
     text: str = Field(pattern=r'^[a-z ]+$')
 
+# Generating this allows the model to generate a relationship type
+# as well as the concept text
 class ConceptWithLinks(Concept):
     relationship_type: Literal[
         "IS_A", 
         "AFFECTS", 
         "CONNECTS_TO"
     ]
+```
 
+#
+
+```python
 class Answer(BaseModel):
     type: Literal["Answer"]
     text: str
@@ -447,29 +463,60 @@ NODE-BN  0.89         ANSWER     Self-awareness in AI can enable ...
 
 # Just do that forever
 
-
+# Please shout out a core directive
 
 # Watch it grow
 
 (if there's time)
 
-# Thanks
+<!-- #
+
+```{=html}
+<div style="display: grid; grid-template-columns: auto auto; gap: 0.5em; justify-content: center;">
+<div style="text-align: right;"><b>Website</b></div>          <div style="font-family: monospace; text-align: left;">dottxt.co</div>
+
+
+<div style="text-align: right;"><b>GitHub</b></div>     <div  style="font-family: monospace; text-align: left;">@dottxt-ai</div>
+<div style="text-align: right;"><b>BlueSky</b></div>    <div  style="font-family: monospace; text-align: left;">@dottxtai.bsky.social</div>
+<div style="text-align: right;"><b>X</b></div>          <div  style="font-family: monospace; text-align: left;">@dottxt_ai</div>
+<div style="text-align: right;"><b>Me</b></div>          <div style="font-family: monospace; text-align: left;">@cameronpfiffer</div>
+
+</div>
+``` -->
 
 #
 
+![](images/outlines-logo.png){width=100%}
+
+# Find us online
+
+##
+
 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; align-items: start; justify-content: center;">
 <div style="display: flex; flex-direction: column; align-items: center;">
-<p style="font-family: 'PP NeueBit', sans-serif; font-size: 3em;">twitter</p>
+<p style="font-family: 'PP NeueBit', sans-serif; font-size: 3em;">Twitter</p>
 ![](images/qr-twitter.png){width=100%}
 </div>
 <div style="display: flex; flex-direction: column; align-items: center;">
-<p style="font-family: 'PP NeueBit', sans-serif; font-size: 3em;">website</p>
+<p style="font-family: 'PP NeueBit', sans-serif; font-size: 3em;">Website</p>
 ![](images/qr-web.png){width=100%}
 </div>
 
 <div style="display: flex; flex-direction: column; align-items: center;">
-<p style="font-family: 'PP NeueBit', sans-serif; font-size: 3em;">github</p>
+<p style="font-family: 'PP NeueBit', sans-serif; font-size: 3em;">GitHub</p>
 ![](images/qr-github.png){width=100%}
 </div>
+</div>
+
+# 
+
+```{=html}
+<div style="display: flex; align-items: center;">
+    <div style="display: flex; flex-direction: row; gap: 1.5rem; align-items: center; width: 100%; justify-content: center">
+    <img src="images/beige-horizontal-logo.svg" style="height: 10em; width: 10em;">
+    </div>
+</div>
+<span style="font-size: 1.3em;">(come get a sticker)</span>
+```
 
 
