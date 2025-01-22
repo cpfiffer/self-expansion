@@ -1,0 +1,475 @@
+---
+logo: images/logo-square-white.svg
+format:
+    revealjs:
+        theme: [custom.scss]
+        css: fonts.css
+        code-line-numbers: false
+        mermaid:
+            theme: dark
+---
+
+#
+
+```{=html}
+<div style="display: flex; align-items: center; gap: 5rem;">
+    <div style="display: flex; flex-direction: row; gap: 1.5rem; align-items: center; width: 100%; justify-content: center">
+    <img src="images/beige-vertical-logo.svg" style="height: 10em; width: 10em;">
+    </div>
+</div>
+```
+
+# My name is <span class="bits-bold" style="font-size: 1.5em;">Cameron Pfiffer</span>
+
+# I work at <span class="bits-bold" style="font-size: 1.5em;">.TXT</span>
+
+# We make AI speak computer
+
+# We do this with structured generation
+
+# Structured generation forces the model to output a specific format
+
+# Go check out our <span class="outlines-logo">Outlines</span> package
+
+# Let's build a self-expanding knowledge graph
+
+## 
+
+```cypher
+╭───────────────────────────────────────────────────────────────────────────╮
+│                                                                           │
+│ You are a superintelligent AI building a self-expanding knowledge graph.  │
+│ Your goal is to achieve the core directive "Understand humans".           │
+│                                                                           │
+│ Generate an expansion of the current node. An expansion may include:      │
+│                                                                           │
+│ - A list of new questions.                                                │
+│ - A list of new concepts.                                                 │
+│ - Concepts may connect to each other.                                     │
+│ - A list of new answers.                                                  │
+│                                                                           │
+│ Respond in the following JSON format:                                     │
+│ {result_format.model_json_schema()}                                       │
+│                                                                           │
+╰───────────────────────────────────────────────────────────────────────────╯
+```
+
+
+# What does that mean?
+
+(stay tuned)
+
+# Tech stack
+
+# Modal + vLLM
+
+##
+
+```python
+from openai import OpenAI
+
+CLIENT = OpenAI(base_url="https://your-modal-url/v1/", api_key="your-api-key")
+
+MODELS = CLIENT.models.list()
+DEFAULT_MODEL = MODELS.data[0].id
+
+def generate(
+    messages: List[Dict[str, str]],
+    response_format: BaseModel,
+) -> BaseModel:
+    # Hijack the openai SDK to talk to vLLM
+    response = CLIENT.beta.chat.completions.parse(
+        model=DEFAULT_MODEL,
+        messages=messages,
+        response_format=response_format, # Enforce structured output
+        extra_body={
+            'guided_decoding_backend': 'outlines',
+            "max_tokens": MAX_TOKENS,
+        }
+    )
+    return response
+```
+
+# Neural Magic quantized models
+
+# <span style="text-align: center; align-items: center; justify-content: center; font-family: monospace; font-size: 0.2em;">neuralmagic/Meta-Llama-3.1-8B-Instruct-quantized.w8a16</span>
+
+# (they're good models)
+
+# neo4j
+
+## 
+
+<!-- Center the text -->
+```{=html}
+<div style="text-align: center; align-items: center; justify-content: center; font-size: 3em; height: 100%; font-weight: bold;">
+I'm using neo4j's Aura
+</div>
+```
+
+# It does semantic search
+
+# <span style="font-size: 0.7em; line-height: 0.5em;">By their powers combined</span>
+
+# drumroll
+
+🥁
+
+## 
+
+```{=html}
+<div style="text-align: center; align-items: center; justify-content: center; font-size: 3em; height: 100%; font-weight: bold; line-height: 1.5em;">
+<span style="font-size: 1.0em;">The</span>
+<br/>
+<span style="font-size: 1em;">self-expanding</span>
+<br/>
+<span style="font-size: 1.0em;">knowledge graph</span>
+<br/>
+<span style="font-size: 0.5em;">(it's cool)</span>
+</div>
+```
+
+# What's a knowledge graph?
+
+# <span style="font-size: 0.7em; line-height: 0.1em; font-weight: 400">A web of __connected facts__ and __concepts__</span>
+
+# <span style="font-size: 0.7em; line-height: 0.1em; font-weight: 400">Here's how you build a knowledge graph that __builds itself__</span>
+
+
+# Our graph structure
+
+## Nodes
+
+- `Core` (core directive)
+- `Question` (what the system wonders about)
+- `Concept` (category of ideas)
+- `Answer` (what the system thinks it knows)
+
+#
+
+```python
+from pydantic import BaseModel, Field
+from typing import Literal
+
+class Question(BaseModel):
+    type: Literal["Question"]
+    text: str
+
+class Concept(BaseModel):
+    type: Literal["Concept"]
+    # Text must be lowercase
+    text: str = Field(pattern=r'^[a-z ]+$')
+
+class ConceptWithLinks(Concept):
+    relationship_type: Literal[
+        "IS_A", 
+        "AFFECTS", 
+        "CONNECTS_TO"
+    ]
+
+class Answer(BaseModel):
+    type: Literal["Answer"]
+    text: str
+```
+
+## Edges
+
+- `RAISES` (core/concept/answer generates question)
+- `ANSWERS` (answer to question)
+- `EXPLAINS` (concept to core)
+- `SUGGESTS` (answer proposes new concepts)
+- `IS_A` (hierarchical concept relationship)
+- `AFFECTS` (causal concept relationship)
+- `CONNECTS_TO` (general concept relationship)
+- `TRAVERSED` (tracks navigation history)
+
+## Algorithm overview
+
+1. Start at a node (initialized at core directive)
+2. Perform an __expansion__ to generate new nodes
+    - If at `Question`: answers 
+    - If at `Concept`: questions + concepts
+    - If at `Answer`: questions + concepts
+3. Choose a related node to `TRAVERSE` to
+4. Repeat forever
+
+
+# Valid nodes dependent on state
+
+##
+
+```python
+class FromQuestion(BaseModel):
+    """If at a question, may generate an answer."""
+    answer: List[Answer]
+
+class FromConcept(BaseModel):
+    """If at a concept, may produce questions or relate to concepts"""
+    questions: List[Question]
+    concepts: List[ConceptWithLinks]
+
+class FromAnswer(BaseModel):
+    """If at an answer, may generate concepts or new questions"""
+    concepts: List[Concept]
+    questions: List[Question]
+```
+
+# An example
+
+# The system prompt
+
+## 
+
+```cypher
+╭───────────────────────────────────────────────────────────────────────────╮
+│                                                                           │
+│ You are a superintelligent AI building a self-expanding knowledge graph.  │
+│ Your goal is to achieve the core directive "{question}".                  │
+│                                                                           │
+│ Generate an expansion of the current node. An expansion may include:      │
+│                                                                           │
+│ - A list of new questions.                                                │
+│ - A list of new concepts.                                                 │
+│ - Concepts may connect to each other.                                     │
+│ - A list of new answers.                                                  │
+│                                                                           │
+│ Respond in the following JSON format:                                     │
+│ {result_format.model_json_schema()}                                       │
+│                                                                           │
+╰───────────────────────────────────────────────────────────────────────────╯
+```
+
+# Begin with the core directive
+
+##
+
+```{=html}
+<div style="display: flex; align-items: center; justify-content: center; height: 100%;">
+<img src="images/core.png" alt="The core directive">
+</div>
+```
+
+# Expand from the core directive
+
+## 
+
+```{=html}
+<div style="text-align: center; align-items: center; justify-content: center;">
+<img src="images/expansion.png" alt="Expanding from the core directive" style="height: 100%;">
+</div>
+```
+
+# Model output
+
+```python
+FromCore(
+    questions=[
+        Question(text="What is the purpose of understanding humans?"),
+        Question(text="Can humans be psychologically manipulated?"),
+    ],
+    concepts=[
+        ConceptWithLinks(text="Empathy", relationship_type="EXPLAINS"),
+        ConceptWithLinks(text="Intelligence", relationship_type="EXPLAINS"),
+    ]
+)
+```
+
+# Add to the graph
+
+##
+
+```cypher
+// Create the from node
+MERGE (core:Core {text: "Understand humans"})
+
+// Create the to node
+MERGE (question:Question {id: 'dc2d880e-02f0-4b77-85b5-4c101364f1d6'})
+ON CREATE SET question.text = "Can humans be psychologically manipulated?"
+
+// Create the relationship
+MERGE (core)-[:RAISES]->(question)
+```
+
+# Traverse to a new node
+
+## 
+
+```{=html}
+<div style="display: flex; align-items: center; justify-content: center; height: 100%;">
+<img src="images/traversal.png" alt="Traversing to a new node">
+</div>
+```
+
+# Behind the scenes
+
+## 
+
+```cypher
+    CORE Understand humans
+
+    DIRECT CONNECTIONS:
+    NODE-AA  RAISES       QUESTION   What are human values?
+    NODE-AB  RAISES       QUESTION   What are humans?
+    NODE-AC  RAISES       QUESTION   How do humans think?
+    NODE-AD  RAISES       QUESTION   What motivates humans?
+    NODE-AE  RAISES       QUESTION   How do humans interact?
+    NODE-AF  RAISES       QUESTION   What are human emotions?
+    NODE-AG  RAISES       QUESTION   What are human needs?
+    NODE-AH  RAISES       QUESTION   How do humans learn?
+    NODE-AI  RAISES       QUESTION   What is human culture?
+    NODE-AJ  RAISES       QUESTION   How do humans process information?
+    NODE-AK  EXPLAINS     CONCEPT    anthropology
+    NODE-AL  EXPLAINS     CONCEPT    cognition
+    NODE-AM  EXPLAINS     CONCEPT    intelligence
+    NODE-AN  EXPLAINS     CONCEPT    human behavior
+    NODE-AO  EXPLAINS     CONCEPT    human social structure
+```
+
+# Prompt
+
+## 
+
+`{selection menu from prior slide}`
+
+__Select a node__ to traverse to. Respond with the __node ID__. You will generate a new expansion of the node you traverse to. You will not be able to choose the current node. You may also choose '__core__' to return to the core node, or '__random__' to choose a random node.
+
+# Structured traversal
+
+##
+
+```python
+# Simplified code
+# valid_node_ids ~ ["NODE-AA", "NODE-AB", ...]
+traversal_generator = outlines.generate.choice(model, valid_node_ids)
+
+# Choose the node to traverse to
+choice = traversal_generator(prompt)
+
+# If the choice is 'core', return to the core node
+if choice == 'core':
+    current_id = core_id
+
+# If the choice is 'random', choose a random node
+elif choice == 'random':
+    current_id = random.choice(valid_node_ids)
+
+# Otherwise, traverse to the chosen node
+else:
+    current_id = choice
+```
+
+##
+
+```cypher
+    CORE Understand humans
+
+    DIRECT CONNECTIONS:
+    NODE-AA  RAISES       QUESTION   What are human values?
+    NODE-AB  RAISES       QUESTION   What are humans?
+    NODE-AC  RAISES       QUESTION   How do humans think?
+->  NODE-AD  RAISES       QUESTION   What motivates humans?
+    NODE-AE  RAISES       QUESTION   How do humans interact?
+    NODE-AF  RAISES       QUESTION   What are human emotions?
+    // omitted nodes
+    NODE-AM  RAISES       QUESTION   What neural mechanisms are inv...
+    NODE-AN  RAISES       QUESTION   What is human intelligence?
+    NODE-AO  EXPLAINS     CONCEPT    anthropology
+    NODE-AP  EXPLAINS     CONCEPT    cognition
+    // omitted nodes
+    NODE-AX  EXPLAINS     CONCEPT    neural network
+    NODE-AY  EXPLAINS     CONCEPT    cerebrum
+
+    SELECTED NODE-AD dc2d880e-02f0-4b77-85b5-4c101364f1d6
+    SELECTED QUESTION What motivates humans?
+```
+
+# Semantic traversal
+
+# Embed everything
+
+##
+
+```python
+# Super easy to do this with Modal
+def embed(content: str) -> List[float]:
+    f = modal.Function.lookup("cameron-embeddings", "embed")
+    return f.remote(content)
+```
+
+# Vector search 
+
+## 
+
+```cypher
+MATCH (m {id: $node_id})
+WHERE m.embedding IS NOT NULL
+CALL db.index.vector.queryNodes(
+    $vector_index_name, 
+    $limit, 
+    m.embedding
+)
+YIELD node, score
+RETURN 
+    node.id as node_id, 
+    node.text as node_text, 
+    score
+```
+
+##
+
+```{=html}
+<div style="display: flex; align-items: center; justify-content: center; height: 100%;">
+<img src="images/expansion-3.png" alt="Traversing to a new node">
+</div>
+```
+
+## 
+
+```cypher
+ANSWER Humans have been able to benefit from AI in terms of efficiency and accuracy, but there are also concerns about job displacement and loss of personal touch.
+
+DIRECT CONNECTIONS:
+NODE-AA  SUGGESTS     CONCEPT    artificial intelligence
+NODE-AE  ANSWERS      QUESTION   Do humans benefit from AI?
+NODE-AJ  ANSWERS      QUESTION   What are the benefits of AI?
+
+SEMANTICALLY RELATED:
+
+NODE-AK  0.89         QUESTION   How does AI affect job displacement?
+NODE-AL  0.88         QUESTION   How does AI maintain personal touch?
+
+NODE-AU  0.85         CONCEPT    human ai trust
+NODE-BC  0.84         CONCEPT    artificial intelligence self awareness
+
+NODE-BG  0.89         ANSWER     Self-awareness in humans and  AI...
+NODE-BN  0.89         ANSWER     Self-awareness in AI can enable ...
+```
+
+# Just do that forever
+
+
+
+# Watch it grow
+
+(if there's time)
+
+# Thanks
+
+#
+
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; align-items: start; justify-content: center;">
+<div style="display: flex; flex-direction: column; align-items: center;">
+<p style="font-family: 'PP NeueBit', sans-serif; font-size: 3em;">twitter</p>
+![](images/qr-twitter.png){width=100%}
+</div>
+<div style="display: flex; flex-direction: column; align-items: center;">
+<p style="font-family: 'PP NeueBit', sans-serif; font-size: 3em;">website</p>
+![](images/qr-web.png){width=100%}
+</div>
+
+<div style="display: flex; flex-direction: column; align-items: center;">
+<p style="font-family: 'PP NeueBit', sans-serif; font-size: 3em;">github</p>
+![](images/qr-github.png){width=100%}
+</div>
+
+
