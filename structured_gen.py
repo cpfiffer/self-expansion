@@ -3,9 +3,13 @@ from openai import OpenAI
 from pydantic import BaseModel
 from typing import List, Dict
 
+import os
+import dotenv
+dotenv.load_dotenv()
+
 CLIENT = OpenAI(
-    base_url="https://txt-ai--cameron-vllm-serve.modal.run/v1/",
-    api_key="super-secret-token",
+    base_url=os.getenv("VLLM_BASE_URL"),
+    api_key=os.getenv("VLLM_TOKEN"),
 )
 
 MODELS = CLIENT.models.list()
@@ -75,11 +79,5 @@ def regex(
     return completion.choices[0].message.content
 
 def embed(content: str) -> List[float]:
-    # response = CLIENT_EMBEDDING.embeddings.create(
-    #     model=DEFAULT_EMBEDDING_MODEL,
-    #     input=content,
-    # )
-    
-    # return response.data[0].embedding
     f = modal.Function.lookup("cameron-embeddings", "embed")
     return f.remote(content)
