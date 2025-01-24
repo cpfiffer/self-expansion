@@ -335,15 +335,15 @@ if __name__ == "__main__":
     # print("WARNING: Clearing the database")
     # clear_db()
 
-    # Set the question
-    question = "Become a dog"
+    # Set the purpose
+    purpose = "Support humanity"
 
     # Create the core node and get its ID
-    current_node_id = get_or_make_core(question)
+    current_node_id = get_or_make_core(purpose)
     core_node_id = current_node_id
 
     # Get embedding dimensions
-    embedding_dimensions = len(sg.embed(question))
+    embedding_dimensions = len(sg.embed(purpose))
 
 
     # Remove existing indices
@@ -412,7 +412,7 @@ if __name__ == "__main__":
         # Get the system prompt
         system_prompt = f"""
         You are a superintelligent AI building a self-expanding knowledge graph. 
-        Your goal is to achieve the core directive "{question}".
+        Your goal is to achieve the core directive "{purpose}".
         
         Generate an expansion of the current node. An expansion may include:
 
@@ -432,7 +432,7 @@ if __name__ == "__main__":
 
         When concepts can be generated, try to do so. They're important.
 
-        Your role is to understand the core directive "{question}".
+        Your role is to understand the core directive "{purpose}".
 
         Respond in the following JSON format:
         {result_format.model_json_schema()}
@@ -467,8 +467,8 @@ if __name__ == "__main__":
 
         # If we are at a concept, we can link to the questions and concepts.
         elif current_node_label == "Concept":
-            for question in expansion.questions:
-                concept_to_question(current_node_text, question.text)
+            for purpose in expansion.questions:
+                concept_to_question(current_node_text, purpose.text)
             for concept in expansion.concepts:
                 concept_to_concept(current_node_text, concept.text, concept.relationship_type)
 
@@ -476,13 +476,13 @@ if __name__ == "__main__":
         elif current_node_label == "Answer":
             for concept in expansion.concepts:
                 answer_to_concept(current_node_text, concept.text)
-            for question in expansion.questions:
-                answer_to_question(current_node_text, question.text)
+            for purpose in expansion.questions:
+                answer_to_question(current_node_text, purpose.text)
 
         # If we are at a core, we can link to the questions and concepts.
         elif current_node_label == "Core":
-            for question in expansion.questions:
-                core_to_question(current_node_text, question.text)
+            for purpose in expansion.questions:
+                core_to_question(current_node_text, purpose.text)
             for concept in expansion.concepts:
                 concept_to_core(concept.text, current_node_text)
 
