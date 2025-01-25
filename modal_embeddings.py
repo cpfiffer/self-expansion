@@ -1,18 +1,18 @@
-import json
-import os
 import socket
 import subprocess
 from pathlib import Path
 
 import modal
 
-GPU_CONFIG = modal.gpu.A10G()
+GPU_CONFIG = modal.gpu.L40S()
 MODEL_ID = "BAAI/bge-base-en-v1.5"
 BATCH_SIZE = 32
 DOCKER_IMAGE = (
-    "ghcr.io/huggingface/text-embeddings-inference:86-0.4.0"  # Ampere 86 for A10s.
-    # "ghcr.io/huggingface/text-embeddings-inference:0.4.0" # Ampere 80 for A100s.
-    # "ghcr.io/huggingface/text-embeddings-inference:0.3.0"  # Turing for T4s.
+    # "ghcr.io/huggingface/text-embeddings-inference:hopper-1.6"  # Hopper 90 for H100s (marked experimental)
+    "ghcr.io/huggingface/text-embeddings-inference:89-1.6"  # Lovelace 89 for L40S
+    # "ghcr.io/huggingface/text-embeddings-inference:86-0.4.0"  # Ampere 86 for A10
+    # "ghcr.io/huggingface/text-embeddings-inference:0.4.0" # Ampere 80 for A100
+    # "ghcr.io/huggingface/text-embeddings-inference:0.3.0"  # Turing for T4
 )
 
 DATA_PATH = Path("/data/dataset.jsonl")
@@ -39,16 +39,15 @@ def spawn_server() -> subprocess.Popen:
             # If so, a connection can never be made.
             retcode = process.poll()
             if retcode is not None:
-                raise RuntimeError(
-                    f"launcher exited unexpectedly with code {retcode}"
-                )
+                raise RuntimeError(f"launcher exited unexpectedly with code {retcode}")
 
 
 def download_model():
     # Wait for server to start. This downloads the model weights when not present.
     spawn_server().terminate()
 
-app = modal.App("cameron-embeddings")
+
+app = modal.App("self-expansion-embeddings")
 
 tei_image = (
     modal.Image.from_registry(
@@ -62,6 +61,7 @@ tei_image = (
 
 with tei_image.imports():
     from httpx import AsyncClient
+
 
 @app.cls(
     gpu=GPU_CONFIG,
@@ -91,8 +91,9 @@ class TextEmbeddingsInference:
 
 
 image = modal.Image.debian_slim(python_version="3.10").pip_install(
-   "pandas", "db-dtypes", "tqdm"
+    "pandas", "db-dtypes", "tqdm"
 )
+
 
 @app.function(
     image=image,
@@ -102,7 +103,8 @@ def embed(data):
 
     return model.embed.remote(data)[0]
 
+
 @app.local_entrypoint()
-def main():
-    embeddings = embed.remote([('hello', 'world'), ('hello', 'world')])
-    print(embeddings)
+def main(text: str = "hello"):
+    embedding = embed.remote([text])
+    print(text, embedding[:10], "...")

@@ -1,13 +1,12 @@
 import subprocess
-from pathlib import Path
 
 import modal
-from modal import App, Image, Mount, Secret, gpu
+from modal import App, Image, Mount, gpu
 from download_llama import MODEL_NAME, MODELS_DIR
 
 ########## CONSTANTS ##########
 
-MODEL_PATH = MODELS_DIR + '/' + MODEL_NAME
+MODEL_PATH = MODELS_DIR + "/" + MODEL_NAME
 
 # define model for serving and path to store in modal container
 SECONDS = 60  # for timeout
@@ -53,7 +52,7 @@ vllm_image = (
     Image.debian_slim(python_version="3.12")
     .pip_install(
         [
-            "vllm",
+            "vllm==0.6.6.post1",
             "huggingface_hub",
             "hf-transfer",
             "ray",
@@ -67,7 +66,7 @@ vllm_image = (
 ########## APP SETUP ##########
 
 
-app = App("cameron-vllm")
+app = App("self-expansion-vllm")
 
 NO_GPU = 1
 TOKEN = "super-secret-token"  # for demo purposes, for production, you can use Modal secrets to store token
@@ -75,9 +74,10 @@ TOKEN = "super-secret-token"  # for demo purposes, for production, you can use M
 # https://github.com/chujiezheng/chat_templates/tree/main/chat_templates
 LOCAL_TEMPLATE_PATH = "template_llama3.jinja"
 
+
 @app.function(
     image=vllm_image,
-    gpu=gpu.A100(count=NO_GPU, size="80GB"),
+    gpu=gpu.L40S(count=NO_GPU),
     container_idle_timeout=20 * SECONDS,
     volumes={MODELS_DIR: volume},
     mounts=[
@@ -85,9 +85,7 @@ LOCAL_TEMPLATE_PATH = "template_llama3.jinja"
             LOCAL_TEMPLATE_PATH, remote_path="/root/template_llama3.jinja"
         )
     ],
-    # https://modal.com/docs/guide/concurrent-inputs
-    concurrency_limit=1,  # fix at 1 to test concurrency within 1 server setup
-    allow_concurrent_inputs=256,  # max concurrent input into container
+    allow_concurrent_inputs=256,  # max concurrent input into container -- effectively batch size
 )
 @modal.web_server(port=8000, startup_timeout=60 * SECONDS)
 def serve():
@@ -100,3 +98,30 @@ def serve():
     """
     print(cmd)
     subprocess.Popen(cmd, shell=True)
+
+
+@app.function(
+    image=vllm_image,
+    gpu=gpu.L40S(count=NO_GPU),
+    container_idle_timeout=20 * SECONDS,
+    volumes={MODELS_DIR: volume},
+    mounts=[
+        Mount.from_local_file(
+            LOCAL_TEMPLATE_PATH, remote_path="/root/template_llama3.jinja"
+        )
+    ],
+    # https://modal.com/docs/guide/concurrent-inputs
+)
+def infer(prompt: str = "How many r's are in the word 'strawberry'?"):
+    from vllm import LLM
+
+    conversation = [{"role": "user", "content": prompt}]
+
+    llm = LLM(model=MODEL_PATH, generation_config="auto")
+    response = llm.chat(conversation, use_tqdm=True)[0].outputs[0].text
+    return response
+
+
+@app.local_entrypoint()
+def main(prompt: str = "How many r's are in the word 'strawberry'?"):
+    print(infer.remote(prompt))
