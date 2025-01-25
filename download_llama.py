@@ -6,7 +6,7 @@ import modal
 
 MODELS_DIR = "/llamas"
 # MODEL_NAME = "neuralmagic/Meta-Llama-3.1-70B-Instruct-quantized.w8a8"
-MODEL_NAME = "neuralmagic/Meta-Llama-3.1-8B-Instruct-quantized.w8a16"
+MODEL_NAME = "neuralmagic/Meta-Llama-3.1-8B-Instruct-quantized.w8a8"
 
 volume = modal.Volume.from_name("llamas", create_if_missing=True)
 

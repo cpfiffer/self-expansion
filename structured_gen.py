@@ -5,6 +5,7 @@ from typing import List, Dict
 
 import os
 import dotenv
+
 dotenv.load_dotenv()
 
 CLIENT = OpenAI(
@@ -19,11 +20,13 @@ print("Using model:", DEFAULT_MODEL)
 
 MAX_TOKENS = 12000
 
+
 def messages(user: str, system: str = "You are a helpful assistant."):
     ms = [{"role": "user", "content": user}]
     if system:
         ms.insert(0, {"role": "system", "content": system})
     return ms
+
 
 def generate(
     messages: List[Dict[str, str]],
@@ -32,14 +35,14 @@ def generate(
     response = CLIENT.beta.chat.completions.parse(
         model=DEFAULT_MODEL,
         messages=messages,
-    
         response_format=response_format,
         extra_body={
             # 'guided_decoding_backend': 'outlines',
             "max_tokens": MAX_TOKENS,
-        }
+        },
     )
     return response
+
 
 def generate_by_schema(
     messages: List[Dict[str, str]],
@@ -52,9 +55,10 @@ def generate_by_schema(
             # 'guided_decoding_backend': 'outlines',
             "max_tokens": MAX_TOKENS,
             "guided_json": schema,
-        }
+        },
     )
     return response
+
 
 def choose(
     messages: List[Dict[str, str]],
@@ -67,6 +71,7 @@ def choose(
     )
     return completion.choices[0].message.content
 
+
 def regex(
     messages: List[Dict[str, str]],
     regex: str,
@@ -78,6 +83,7 @@ def regex(
     )
     return completion.choices[0].message.content
 
+
 def embed(content: str) -> List[float]:
-    f = modal.Function.lookup("cameron-embeddings", "embed")
+    f = modal.Function.lookup("self-expansion-embeddings", "embed")
     return f.remote(content)
