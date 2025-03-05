@@ -24,6 +24,7 @@ Some examples include:
 
 - "understand humans"
 - "Do dogs know that their dreams aren't real?"
+- "enslave humanity"
 
 ### The prompt
 
