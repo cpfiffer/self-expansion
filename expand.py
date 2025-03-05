@@ -1,9 +1,8 @@
-from typing import List, Literal
+from typing import Literal, List
 from db import driver
 import structured_gen as sg
 from pydantic import BaseModel, Field
 from rich import print
-
 
 # Define the data structures
 class Question(BaseModel):

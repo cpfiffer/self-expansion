@@ -2,6 +2,7 @@
 # args: ["--force-download"]
 # ---
 
+import os
 import modal
 
 MODELS_DIR = "/llamas"
@@ -18,7 +19,7 @@ image = (
             "hf-transfer",  # download models faster with Rust
         ]
     )
-    .env({"HF_HUB_ENABLE_HF_TRANSFER": "1"})
+    .env({"HF_HUB_ENABLE_HF_TRANSFER": "1", "HF_TOKEN": os.environ["HF_TOKEN"]})
 )
 
 

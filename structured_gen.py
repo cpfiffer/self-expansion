@@ -13,6 +13,8 @@ CLIENT = OpenAI(
     api_key=os.getenv("VLLM_TOKEN"),
 )
 
+print("Using base URL:", CLIENT.base_url)
+
 MODELS = CLIENT.models.list()
 DEFAULT_MODEL = MODELS.data[0].id
 

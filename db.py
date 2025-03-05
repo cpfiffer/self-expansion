@@ -2,7 +2,8 @@ import os
 from neo4j import GraphDatabase
 from dotenv import load_dotenv
 
-load_dotenv()
+# Load .env file with override=True to take precedence over system variables
+load_dotenv(override=True)
 
 try:  # to connect to the graph db
     URI = os.environ["NEO4J_URI"]

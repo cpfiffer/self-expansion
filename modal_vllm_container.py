@@ -1,4 +1,5 @@
 import subprocess
+import os
 
 import modal
 from modal import App, Image, Mount, gpu
@@ -59,7 +60,7 @@ vllm_image = (
             "transformers",
         ]
     )
-    .env({"HF_HUB_ENABLE_HF_TRANSFER": "1"})
+    .env({"HF_HUB_ENABLE_HF_TRANSFER": "1", "HF_TOKEN": os.environ["HF_TOKEN"]})
 )
 
 
@@ -68,16 +69,15 @@ vllm_image = (
 
 app = App("self-expansion-vllm")
 
-NO_GPU = 1
+NUM_GPU = 1
 TOKEN = "super-secret-token"  # for demo purposes, for production, you can use Modal secrets to store token
 
 # https://github.com/chujiezheng/chat_templates/tree/main/chat_templates
 LOCAL_TEMPLATE_PATH = "template_llama3.jinja"
 
-
 @app.function(
     image=vllm_image,
-    gpu=gpu.L40S(count=NO_GPU),
+    gpu=gpu.L40S(count=NUM_GPU),
     container_idle_timeout=20 * SECONDS,
     volumes={MODELS_DIR: volume},
     mounts=[
@@ -92,7 +92,7 @@ def serve():
     cmd = f"""
     python -m vllm.entrypoints.openai.api_server --model {MODEL_PATH} \
         --max-model-len 24000 \
-        --tensor-parallel-size {NO_GPU} \
+        --tensor-parallel-size {NUM_GPU} \
         --trust-remote-code \
         --chat-template /root/template_llama3.jinja
     """
@@ -102,7 +102,7 @@ def serve():
 
 @app.function(
     image=vllm_image,
-    gpu=gpu.L40S(count=NO_GPU),
+    gpu=gpu.L40S(count=NUM_GPU),
     container_idle_timeout=20 * SECONDS,
     volumes={MODELS_DIR: volume},
     mounts=[
