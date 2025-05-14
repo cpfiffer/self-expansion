@@ -4,6 +4,7 @@ The self-expanding knowledge graph is a proof-of-concept built for [an event](ht
 
 This repo demonstrates the use of structured generation via Outlines + vLLM in AI systems engineering. Hopefully the code here inspires you to work on something similar. 
 
+See this article for [a writeup](https://devreal.ai/self-expanding-graphs/), or watch [the recording of the talk](https://www.youtube.com/watch?v=xmDf1vZwe_o).
 Running expander is as simple as 
 
 ```
